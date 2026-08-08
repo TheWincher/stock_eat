@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:stock_eat/presentation/pages/add_category_page.dart';
 import 'package:stock_eat/presentation/pages/add_product_page.dart';
 import 'package:stock_eat/presentation/pages/add_stock_item_page.dart';
+import 'package:stock_eat/presentation/providers/product_providers.dart';
 import 'package:stock_eat/presentation/providers/stock_providers.dart';
 
 class MyApp extends StatelessWidget {
@@ -20,6 +21,7 @@ class StockListPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final stockItemsAsync = ref.watch(stockItemsStreamProvider);
+    final productsAsync = ref.watch(productsStreamProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -51,15 +53,26 @@ class StockListPage extends ConsumerWidget {
           if (items.isEmpty) {
             return const Center(child: Text('Aucun article en stock'));
           }
-          return ListView.builder(
-            itemCount: items.length,
-            itemBuilder: (context, index) {
-              final item = items[index];
-              return ListTile(
-                title: Text('${item.quantity} ${item.unit.name}'),
-                subtitle: Text('Produit: ${item.productId}'),
+          return productsAsync.when(
+            data: (products) {
+              final productsById = {for (final p in products) p.id: p};
+              return ListView.builder(
+                itemCount: items.length,
+                itemBuilder: (context, index) {
+                  final item = items[index];
+                  final productName =
+                      productsById[item.productId]?.name ?? 'Produit inconnu';
+                  return ListTile(
+                    title: Text(productName),
+                    subtitle: Text(
+                      '${item.quantity} ${item.unit.name} · ${item.location.name}',
+                    ),
+                  );
+                },
               );
             },
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (error, stack) => Center(child: Text('Erreur : $error')),
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
