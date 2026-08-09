@@ -5,6 +5,7 @@ import 'package:stock_eat/presentation/pages/add_product_page.dart';
 import 'package:stock_eat/presentation/pages/add_stock_item_page.dart';
 import 'package:stock_eat/presentation/providers/product_providers.dart';
 import 'package:stock_eat/presentation/providers/stock_providers.dart';
+import 'package:stock_eat/presentation/providers/usecase_providers.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -62,10 +63,24 @@ class StockListPage extends ConsumerWidget {
                   final item = items[index];
                   final productName =
                       productsById[item.productId]?.name ?? 'Produit inconnu';
-                  return ListTile(
-                    title: Text(productName),
-                    subtitle: Text(
-                      '${item.quantity} ${item.unit.name} · ${item.location.name}',
+
+                  return Dismissible(
+                    key: ValueKey(item.id),
+                    direction: DismissDirection.endToStart,
+                    background: Container(
+                      color: Colors.red,
+                      alignment: Alignment.centerRight,
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: const Icon(Icons.delete, color: Colors.white),
+                    ),
+                    onDismissed: (_) {
+                      ref.read(deleteStockItemUseCase).call(item.id);
+                    },
+                    child: ListTile(
+                      title: Text(productName),
+                      subtitle: Text(
+                        '${item.quantity} ${item.unit.name} · ${item.location.name}',
+                      ),
                     ),
                   );
                 },
