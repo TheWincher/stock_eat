@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
+import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:stock_eat/domain/entities/unit.dart';
@@ -11,13 +12,14 @@ import 'tables/categories_table.dart';
 import 'tables/products_table.dart';
 import 'tables/stock_items_table.dart';
 
-
-
 part 'app_database.g.dart';
 
 @DriftDatabase(tables: [Categories, Products, StockItems])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
+
+  @visibleForTesting
+  AppDatabase.forTesting(super.e);
 
   @override
   int get schemaVersion => 1;
