@@ -1,7 +1,7 @@
 # TODO
 
 ## Cassé
-- [ ] Corriger `test/widget_test.dart` (test par défaut du compteur, hérité du template, échoue actuellement)
+- [x] Corriger `test/widget_test.dart` (hangait à cause d'un Timer interne de nettoyage de Drift toujours en attente au moment du teardown du binding de test)
 
 ## CRUD incomplet
 - [ ] Suppression de `Category` (use case + UI)
