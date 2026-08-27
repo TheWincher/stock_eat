@@ -4,7 +4,7 @@
 - [x] Corriger `test/widget_test.dart` (hangait à cause d'un Timer interne de nettoyage de Drift toujours en attente au moment du teardown du binding de test)
 
 ## CRUD incomplet
-- [ ] Suppression de `Category` (use case + UI)
+- [x] Suppression de `Category` (use case + UI, bloquée si un produit référence encore la catégorie via `ON DELETE RESTRICT`)
 - [ ] Suppression de `Product` (use case + UI)
 - [ ] Modification de quantité pour `StockItem` (use case + UI, `StockRepository.update` existe déjà côté infra)
 
