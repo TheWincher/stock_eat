@@ -32,12 +32,14 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
     if (name.isEmpty || category == null) return;
 
     final barcode = _barcodeController.text.trim();
-    await ref.read(addProductUseCaseProvider).call(
-      name,
-      category.id,
-      _selectedUnit,
-      barcode.isEmpty ? null : barcode,
-    );
+    await ref
+        .read(addProductUseCaseProvider)
+        .call(
+          name,
+          category.id,
+          _selectedUnit,
+          barcode.isEmpty ? null : barcode,
+        );
     _nameController.clear();
     _barcodeController.clear();
   }
@@ -57,34 +59,49 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
               children: [
                 TextField(
                   controller: _nameController,
-                  decoration: const InputDecoration(labelText: 'Nom du produit'),
+                  decoration: const InputDecoration(
+                    labelText: 'Nom du produit',
+                  ),
                 ),
                 categoriesAsync.when(
                   data: (categories) => DropdownButtonFormField<Category>(
                     initialValue: _selectedCategory,
                     decoration: const InputDecoration(labelText: 'Catégorie'),
                     items: categories
-                        .map((c) => DropdownMenuItem(value: c, child: Text(c.name)))
+                        .map(
+                          (c) =>
+                              DropdownMenuItem(value: c, child: Text(c.name)),
+                        )
                         .toList(),
-                    onChanged: (value) => setState(() => _selectedCategory = value),
+                    onChanged: (value) =>
+                        setState(() => _selectedCategory = value),
                   ),
                   loading: () => const CircularProgressIndicator(),
                   error: (error, stack) => Text('Erreur : $error'),
                 ),
                 DropdownButtonFormField<Unit>(
                   initialValue: _selectedUnit,
-                  decoration: const InputDecoration(labelText: 'Unité par défaut'),
+                  decoration: const InputDecoration(
+                    labelText: 'Unité par défaut',
+                  ),
                   items: Unit.values
-                      .map((u) => DropdownMenuItem(value: u, child: Text(u.name)))
+                      .map(
+                        (u) => DropdownMenuItem(value: u, child: Text(u.name)),
+                      )
                       .toList(),
                   onChanged: (value) => setState(() => _selectedUnit = value!),
                 ),
                 TextField(
                   controller: _barcodeController,
-                  decoration: const InputDecoration(labelText: 'Code-barres (optionnel)'),
+                  decoration: const InputDecoration(
+                    labelText: 'Code-barres (optionnel)',
+                  ),
                 ),
                 const SizedBox(height: 8),
-                ElevatedButton(onPressed: _submit, child: const Text('Ajouter')),
+                ElevatedButton(
+                  onPressed: _submit,
+                  child: const Text('Ajouter'),
+                ),
               ],
             ),
           ),
@@ -92,8 +109,39 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
             child: productsAsync.when(
               data: (products) => ListView.builder(
                 itemCount: products.length,
-                itemBuilder: (context, index) =>
-                    ListTile(title: Text(products[index].name)),
+                itemBuilder: (context, index) {
+                  final product = products[index];
+                  return Dismissible(
+                    key: ValueKey(product.id),
+                    direction: DismissDirection.endToStart,
+                    background: Container(
+                      color: Colors.red,
+                      alignment: Alignment.centerRight,
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: const Icon(Icons.delete, color: Colors.white),
+                    ),
+                    confirmDismiss: (_) async {
+                      try {
+                        await ref
+                            .read(deleteProductUsecaseProvider)
+                            .call(product.id);
+                        return true;
+                      } catch (_) {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                'Impossible de supprimer : produit encore présent en stock',
+                              ),
+                            ),
+                          );
+                        }
+                        return false;
+                      }
+                    },
+                    child: ListTile(title: Text(product.name)),
+                  );
+                },
               ),
               loading: () => const Center(child: CircularProgressIndicator()),
               error: (error, stack) => Center(child: Text('Erreur : $error')),

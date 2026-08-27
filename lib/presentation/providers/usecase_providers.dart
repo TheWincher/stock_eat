@@ -3,6 +3,7 @@ import 'package:stock_eat/application/usecases/add_category_usecase.dart';
 import 'package:stock_eat/application/usecases/add_product_usecase.dart';
 import 'package:stock_eat/application/usecases/add_stock_item_usecase.dart';
 import 'package:stock_eat/application/usecases/delete_category_usecase.dart';
+import 'package:stock_eat/application/usecases/delete_product_usecase.dart';
 import 'package:stock_eat/application/usecases/delete_stock_item_usecase.dart';
 import 'package:stock_eat/application/usecases/watch_categories_usecase.dart';
 import 'package:stock_eat/application/usecases/watch_products_usecase.dart';
@@ -40,3 +41,7 @@ final deleteStockItemUseCaseProvider = Provider<DeleteStockItemUseCase>((ref) {
 final deleteCategoryUsecaseProvider = Provider<DeleteCategoryUsecase>((ref) {
   return DeleteCategoryUsecase(ref.watch(categoryRepositoryProvider));
 });
+
+final deleteProductUsecaseProvider = Provider<DeleteProductUsecase>(
+  (ref) => DeleteProductUsecase(ref.watch(productRepositoryProvider)),
+);

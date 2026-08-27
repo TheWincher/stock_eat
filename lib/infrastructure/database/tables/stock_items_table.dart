@@ -6,7 +6,8 @@ import 'package:stock_eat/infrastructure/database/tables/products_table.dart';
 @DataClassName('StockItemRow')
 class StockItems extends Table {
   TextColumn get id => text()();
-  TextColumn get productId => text().references(Products, #id)();
+  TextColumn get productId =>
+      text().references(Products, #id, onDelete: KeyAction.restrict)();
   RealColumn get quantity => real()();
   IntColumn get unit => intEnum<Unit>()();
   IntColumn get location => intEnum<StorageLocation>()();
