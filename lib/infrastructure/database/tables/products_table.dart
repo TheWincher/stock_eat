@@ -6,7 +6,8 @@ import 'package:stock_eat/infrastructure/database/tables/categories_table.dart';
 class Products extends Table {
   TextColumn get id => text()();
   TextColumn get name => text()();
-  TextColumn get categoryId => text().references(Categories, #id)();
+  TextColumn get categoryId =>
+      text().references(Categories, #id, onDelete: KeyAction.restrict)();
   IntColumn get defaultUnit => intEnum<Unit>()();
   TextColumn get barcode => text().nullable()();
 

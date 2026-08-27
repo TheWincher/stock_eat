@@ -74,7 +74,7 @@ class StockListPage extends ConsumerWidget {
                       child: const Icon(Icons.delete, color: Colors.white),
                     ),
                     onDismissed: (_) {
-                      ref.read(deleteStockItemUseCase).call(item.id);
+                      ref.read(deleteStockItemUseCaseProvider).call(item.id);
                     },
                     child: ListTile(
                       title: Text(productName),
