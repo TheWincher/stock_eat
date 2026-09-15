@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:stock_eat/domain/entities/stock_item.dart';
 import 'package:stock_eat/presentation/pages/add_category_page.dart';
 import 'package:stock_eat/presentation/pages/add_product_page.dart';
 import 'package:stock_eat/presentation/pages/add_stock_item_page.dart';
@@ -81,6 +82,7 @@ class StockListPage extends ConsumerWidget {
                       subtitle: Text(
                         '${item.quantity} ${item.unit.name} · ${item.location.name}',
                       ),
+                      onTap: () => _showEditQuantityDialog(context, ref, item),
                     ),
                   );
                 },
@@ -93,6 +95,73 @@ class StockListPage extends ConsumerWidget {
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) => Center(child: Text('Erreur : $error')),
       ),
+    );
+  }
+}
+
+Future<void> _showEditQuantityDialog(
+  BuildContext context,
+  WidgetRef ref,
+  StockItem item,
+) async {
+  final newQuantity = await showDialog<double>(
+    context: context,
+    builder: (context) => _EditQuantityDialog(initialQuantity: item.quantity),
+  );
+
+  if (newQuantity == null) return;
+
+  await ref
+      .read(updateStockItemQuantityUsecaseProvider)
+      .call(item, newQuantity);
+}
+
+class _EditQuantityDialog extends StatefulWidget {
+  const _EditQuantityDialog({required this.initialQuantity});
+
+  final double initialQuantity;
+
+  @override
+  State<_EditQuantityDialog> createState() => _EditQuantityDialogState();
+}
+
+class _EditQuantityDialogState extends State<_EditQuantityDialog> {
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(
+      text: widget.initialQuantity.toString(),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Modifier la quantité'),
+      content: TextField(
+        controller: _controller,
+        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Annuler'),
+        ),
+        TextButton(
+          onPressed: () => Navigator.of(
+            context,
+          ).pop(double.tryParse(_controller.text.trim())),
+          child: const Text('Enregistrer'),
+        ),
+      ],
     );
   }
 }
