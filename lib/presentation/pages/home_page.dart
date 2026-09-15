@@ -78,9 +78,19 @@ class StockListPage extends ConsumerWidget {
                       ref.read(deleteStockItemUseCaseProvider).call(item.id);
                     },
                     child: ListTile(
+                      leading: item.expirationDate != null
+                          ? Icon(
+                              Icons.circle,
+                              size: 12,
+                              color:
+                                  _expirationColor(item.expirationDate) ??
+                                  Colors.green,
+                            )
+                          : null,
                       title: Text(productName),
                       subtitle: Text(
-                        '${item.quantity} ${item.unit.name} · ${item.location.name}',
+                        '${item.quantity} ${item.unit.name} · ${item.location.name}'
+                        '${item.expirationDate != null ? ' · DLC ${_formatDate(item.expirationDate!)}' : ''}',
                       ),
                       onTap: () => _showEditQuantityDialog(context, ref, item),
                     ),
@@ -164,4 +174,25 @@ class _EditQuantityDialogState extends State<_EditQuantityDialog> {
       ],
     );
   }
+}
+
+Color? _expirationColor(DateTime? expirationDate) {
+  if (expirationDate == null) return null;
+  final now = DateTime.now();
+  final today = DateTime(now.year, now.month, now.day);
+  final expiration = DateTime(
+    expirationDate.year,
+    expirationDate.month,
+    expirationDate.day,
+  );
+  final daysLeft = expiration.difference(today).inDays;
+  if (daysLeft < 0) return Colors.red;
+  if (daysLeft <= 3) return Colors.orange;
+  return null;
+}
+
+String _formatDate(DateTime date) {
+  final day = date.day.toString().padLeft(2, '0');
+  final month = date.month.toString().padLeft(2, '0');
+  return '$day/$month/${date.year}';
 }
