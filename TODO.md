@@ -6,7 +6,7 @@
 ## CRUD incomplet
 - [x] Suppression de `Category` (use case + UI, bloquée si un produit référence encore la catégorie via `ON DELETE RESTRICT`)
 - [x] Suppression de `Product` (use case + UI, bloquée si un `StockItem` référence encore le produit via `ON DELETE RESTRICT`)
-- [ ] Modification de quantité pour `StockItem` (use case + UI, `StockRepository.update` existe déjà côté infra)
+- [x] Modification de quantité pour `StockItem` (use case + UI, dialogue au tap sur un article)
 
 ## UX
 - [ ] Indicateur visuel pour les DLC proches/dépassées dans `StockListPage`
