@@ -9,7 +9,7 @@
 - [x] Modification de quantité pour `StockItem` (use case + UI, dialogue au tap sur un article)
 
 ## UX
-- [ ] Indicateur visuel pour les DLC proches/dépassées dans `StockListPage`
+- [x] Indicateur visuel pour les DLC proches/dépassées dans `StockListPage` (rouge dépassée, orange ≤ 3 jours, vert au-delà)
 - [ ] Confirmation avant suppression (actuellement le swipe supprime directement, sans annuler)
 - [ ] Validation/retour d'erreur dans les formulaires (ex: quantité invalide échoue silencieusement)
 
